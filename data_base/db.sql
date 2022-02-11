@@ -1,0 +1,23 @@
+CREATE TABLE total_data(
+    index SERIAL PRIMARY KEY,
+    Cod_Loc VARCHAR(255),
+    IdProvincia VARCHAR(255),
+    IdDepartamento VARCHAR(255),
+    Categoria VARCHAR(255),
+    Subcategoria VARCHAR(255),
+    Provincia VARCHAR(255),
+    Localidad VARCHAR(255),
+    Nombre VARCHAR(255),
+    Domicilio VARCHAR(255),
+    Piso VARCHAR(255),
+    CP VARCHAR(255),
+    Cod_area VARCHAR(255),
+    Telefono VARCHAR(255),
+    Mail VARCHAR(255),
+    Web VARCHAR(255),
+    Pantallas INTEGER,
+    Butacas INTEGER,
+    espacio_INCAA VARCHAR(255),
+    Fuente VARCHAR(255),
+    Fecha_Actualizacion TIMESTAMP without time zone
+)

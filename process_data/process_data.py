@@ -4,6 +4,7 @@ import glob
 from datetime import datetime
 
 
+
 class Process_data:
     def __init__(self):
         """ Se obtienen los path donde se encuentran los archivos csv y se generanlos data frame"""
@@ -75,7 +76,6 @@ class Process_data:
         self.data2['espacio_INCAA'] = self.data2['espacio_INCAA'].str.lower()
         self.data2.at[1,'espacio_INCAA']='null'
         
-
         self.data2.insert(4, "Subcategoria", 'null', allow_duplicates=False)
         self.data1.insert(15, "Pantallas", 'null', allow_duplicates=False)
         self.data1.insert(16, "Butacas", 'null', allow_duplicates=False)
@@ -88,39 +88,54 @@ class Process_data:
         self.data2.to_excel('data2.xlsx')
         self.data3.to_excel('data3.xlsx')
         '''
+        """ Concateno los 3 data frame"""
         self.total_data_frame = pd.concat([self.data1,self.data2,self.data3])
-        """ Agrego la columna Fecha_Actualizacion en formato date() """
+
+        """ Agrego la columna Fecha_Actualizacion en formato datetime """
         today = datetime.now()
 
         self.total_data_frame.insert(19, 'Fecha_Actualizacion', today , allow_duplicates=False)
         self.total_data_frame['Fecha_Actualizacion'] = pd.to_datetime(self.total_data_frame['Fecha_Actualizacion'], format="%d/%m/%Y")
-    
 
+        #engine = get_engine()
+        #self.total_data_frame.to_sql('total_data', con=engine, if_exists='replace')
         #self.total_data_frame.to_excel('total_data_frame.xlsx')
-        print('datas frames normalizados y concatenados en uno')
+        print('Datas frames normalizados y concatenados preparado')
+        
+        return self.total_data_frame
         
         
     def cantidades_conjuntas(self):
+        cant_conjuntas = []
         
         """ Cantidad de registros totales por categoría """
-        cat_total_registros = self.total_data_frame[['Categoria']].value_counts()
-        print(cat_total_registros)
+        total_categoria = self.total_data_frame[['Categoria']].value_counts()
+        cant_conjuntas.append(total_categoria)
 
         """ Cantidad de registros totales por fuente """
         fuente_total_registro = self.total_data_frame[['Fuente']].value_counts()
-        print(fuente_total_registro)
+        cant_conjuntas.append(fuente_total_registro)
+      
+        
 
         """ Cantidad de registros por provincia y categoría """
         prov_cat_total = self.total_data_frame[['Provincia','Categoria']].value_counts()
-        #prov_cat_total.to_excel('pct.xlsx')
-        print(prov_cat_total)
+        cant_conjuntas.append(prov_cat_total)
 
+        print('Cantidades conjuntas preparado')
+        return cant_conjuntas
         
-
     def info_cines(self):
-        data_cine = self.data2[['Provincia','Pantallas','Butacas','espacio_INCAA']].value_counts()
-        data_cine.to_excel('datos_cine.xlsx')
-        print(data_cine)
+        """ Funcion que arroja los datos para la tabla cines"""
+        # Intercambio los si y null por 1 y 0
+        mapear = {'si':1, 'null':0}
+        self.data2['espacio_INCAA'] = self.data2['espacio_INCAA'].replace(mapear)
 
-
-
+        # Sumo la cantidad de elementos para cada provincia
+        cine_data = self.data2.groupby('Provincia')[['Pantallas','Butacas','espacio_INCAA']].sum()
+        
+        print('Data frame para tabla cine preparado')
+        
+        
+        return cine_data
+        
