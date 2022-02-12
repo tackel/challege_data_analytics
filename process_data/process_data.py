@@ -4,7 +4,7 @@ import glob
 from datetime import datetime
 
 
-
+today = datetime.now()
 class Process_data:
     def __init__(self):
         """ Se obtienen los path donde se encuentran los archivos csv y se generanlos data frame"""
@@ -24,17 +24,10 @@ class Process_data:
         self.data_frame_1 = pd.read_csv(rutas[0], index_col=None)
         self.data_frame_2 = pd.read_csv(rutas[1], index_col=None)
         self.data_frame_3 = pd.read_csv(rutas[2], index_col=None)
-        self.total_data_frame = pd.DataFrame()
-        '''
-        data_frame_1.to_excel('data1.xlsx')
-        data_frame_2.to_excel('data2.xlsx')
-        data_frame_3.to_excel('data3.xlsx')
-        '''
-        print('3 data frame creados')
-       
-
-    def normalizar_data(self):
         
+        print('3 data frame creados a partir de archivos csv')
+    
+    def normalizar_data(self):
         """ Se Modifican los nombres de columnas para poder generar un data frame general,
         de bibliotecas, cines y museos"""
         
@@ -92,50 +85,61 @@ class Process_data:
         self.total_data_frame = pd.concat([self.data1,self.data2,self.data3])
 
         """ Agrego la columna Fecha_Actualizacion en formato datetime """
-        today = datetime.now()
+        self.total_data_frame = self.total_data_frame.assign(Fecha_actualizacion=today)
 
-        self.total_data_frame.insert(19, 'Fecha_Actualizacion', today , allow_duplicates=False)
-        self.total_data_frame['Fecha_Actualizacion'] = pd.to_datetime(self.total_data_frame['Fecha_Actualizacion'], format="%d/%m/%Y")
-
-        #engine = get_engine()
-        #self.total_data_frame.to_sql('total_data', con=engine, if_exists='replace')
         #self.total_data_frame.to_excel('total_data_frame.xlsx')
-        print('Datas frames normalizados y concatenados preparado')
+        print('Datos Para Tabla total_data Preparados')
         
         return self.total_data_frame
         
         
     def cantidades_conjuntas(self):
-        cant_conjuntas = []
-        
         """ Cantidad de registros totales por categoría """
-        total_categoria = self.total_data_frame[['Categoria']].value_counts()
-        cant_conjuntas.append(total_categoria)
-
-        """ Cantidad de registros totales por fuente """
-        fuente_total_registro = self.total_data_frame[['Fuente']].value_counts()
-        cant_conjuntas.append(fuente_total_registro)
-      
+        # Cambio el nombre a la columna para que no coincida con otra
+        categoria_total = self.total_data_frame[['Categoria']].value_counts()
+        categoria_total = categoria_total.reset_index(name='Cant_x_cat')
+        categoria_total.rename(columns={
+            'Categoria':'Categorias'
+        }, inplace=True )
         
-
+        
+       
+        """ Cantidad de registros totales por fuente """
+        fuente_total = self.total_data_frame[['Fuente']].value_counts()
+        fuente_total = fuente_total.reset_index(name='Cant_x_fuente')
+       
         """ Cantidad de registros por provincia y categoría """
         prov_cat_total = self.total_data_frame[['Provincia','Categoria']].value_counts()
-        cant_conjuntas.append(prov_cat_total)
+        prov_cat_total = prov_cat_total.reset_index(name='Cant_x_prov_cate')
+        
+        # concateno los df
+        cant_data_final = pd.concat([categoria_total,fuente_total,prov_cat_total], axis=1)
+        cant_data_final = cant_data_final.assign(Fecha_actualizacion=today)
+        cant_data_final = cant_data_final.fillna('null')
+      
 
-        print('Cantidades conjuntas preparado')
-        return cant_conjuntas
+        #cant_data_final.to_excel('data_final.xlsx')
+        print('Datos Para Tabla Cantidades Preparados')
+        
+        return cant_data_final
         
     def info_cines(self):
         """ Funcion que arroja los datos para la tabla cines"""
         # Intercambio los si y null por 1 y 0
         mapear = {'si':1, 'null':0}
         self.data2['espacio_INCAA'] = self.data2['espacio_INCAA'].replace(mapear)
-
+        
         # Sumo la cantidad de elementos para cada provincia
         cine_data = self.data2.groupby('Provincia')[['Pantallas','Butacas','espacio_INCAA']].sum()
+        # Asigno la columna de fecha de actualizacion
+        cine_data = cine_data.assign(Fecha_actualizacion=today)
         
-        print('Data frame para tabla cine preparado')
-        
+        print('Datos Para Tabla Cine Preparados')
         
         return cine_data
-        
+
+obj = Process_data()
+obj.normalizar_data()
+obj.cantidades_conjuntas()
+obj.info_cines()
+

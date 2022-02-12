@@ -23,7 +23,10 @@ def get_engine():
         return None, 'fail'
 
     return engine
+
+
 '''
+# Se crea la session para usar el orm
 def get_session():
     engine = get_engine()
     session = sessionmaker(bind=engine)()
