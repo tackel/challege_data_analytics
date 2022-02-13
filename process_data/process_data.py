@@ -2,30 +2,34 @@ import os
 import pandas as pd
 import glob
 from datetime import datetime
-
+import logging
 
 today = datetime.now()
 class Process_data:
     def __init__(self):
         """ Se obtienen los path donde se encuentran los archivos csv y se generanlos data frame"""
-        rutas = []
-        content = []
-        #data_frame = pd.DataFrame()
+        try:
+            rutas = []
+            content = []
+            #data_frame = pd.DataFrame()
 
-        for folder, subfolders, files in os.walk('path_data/'):  
-            for file in files:  
-                if file.endswith('.csv'):  
+            for folder, subfolders, files in os.walk('path_data/'):  
+                for file in files:  
+                    if file.endswith('.csv'):  
 
-                    path = os.path.join(folder, file)
-                    rutas.append(path)
-                    
-                    #df = pd.read_csv(path, index_col=None)
-        
-        self.data_frame_1 = pd.read_csv(rutas[0], index_col=None)
-        self.data_frame_2 = pd.read_csv(rutas[1], index_col=None)
-        self.data_frame_3 = pd.read_csv(rutas[2], index_col=None)
-        
-        print('3 data frame creados a partir de archivos csv')
+                        path = os.path.join(folder, file)
+                        rutas.append(path)
+                        
+                        #df = pd.read_csv(path, index_col=None)
+            
+            self.data_frame_1 = pd.read_csv(rutas[0], index_col=None)
+            self.data_frame_2 = pd.read_csv(rutas[1], index_col=None)
+            self.data_frame_3 = pd.read_csv(rutas[2], index_col=None)
+            
+            print('3 data frame creados a partir de archivos csv')
+        except:
+            logging.exception('Error en las rutas de archivos csv. ')
+          
     
     def normalizar_data(self):
         """ Se Modifican los nombres de columnas para poder generar un data frame general,
@@ -137,9 +141,10 @@ class Process_data:
         print('Datos Para Tabla Cine Preparados')
         
         return cine_data
-
+'''
 obj = Process_data()
 obj.normalizar_data()
 obj.cantidades_conjuntas()
 obj.info_cines()
 
+'''

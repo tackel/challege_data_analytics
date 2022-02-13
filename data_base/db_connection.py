@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-#import logging
+import logging
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy_utils import database_exists, create_database
@@ -15,10 +15,10 @@ def get_engine():
             print('Data Base no existe y fue creada')
             
         engine = create_engine(url)
-        #log.info("engina creado!")
+        #log.info("engine creado!")
         print('Coneccion, engine, realizada con exito')
     except IOError:
-        #log.exception("Failed to get database connection!")
+        logging.exception("Failed to get database connection!")
         print("Failed to get database connection!")
         return None, 'fail'
 
