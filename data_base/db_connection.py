@@ -6,23 +6,28 @@ from sqlalchemy_utils import database_exists, create_database
 
 from data_base import setting
 
-#log = logging.getLogger(__name__)
+
 def get_engine():
     try:
         url = f"postgresql://{setting.DB_USER}:{setting.DB_PASSWORD}@{setting.DB_HOST}:{setting.DB_PORT}/{setting.DB_DATABASE}"
         if not database_exists(url):
             create_database(url)
-            print('Data Base no existe y fue creada')
+            
+            print('Data Base does not exist and was created')
+            logging.info(f'Database does not exist and was created with the name {setting.DB_DATABASE} ')
             
         engine = create_engine(url)
-        #log.info("engine creado!")
-        print('Coneccion, engine, realizada con exito')
-    except IOError:
-        logging.exception("Failed to get database connection!")
+        
+        logging.info('Connection, engine, ok! ')
+        print('Connection, engine, ok!')
+        return engine
+
+    except:
+        logging.error("Failed to get database connection!")
         print("Failed to get database connection!")
         return None, 'fail'
 
-    return engine
+    
 
 
 '''
@@ -34,7 +39,6 @@ def get_session():
     print('Session realizada con exito')
     return session
 '''
-
 #engine = get_engine()
 #session = get_session()
 Base = declarative_base()

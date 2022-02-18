@@ -1,7 +1,7 @@
 from data_base import db_connection
 from sqlalchemy import Column, Integer, String, DateTime
 
-""" Clase para generar las tablas"""
+""" Clases para generar las tablas"""
 class Total_data(db_connection.Base):
     __tablename__ = 'total_data'
     id = Column(Integer, primary_key=True)
@@ -26,7 +26,30 @@ class Total_data(db_connection.Base):
     espacio_INCAA = Column(String)
     Fuente = Column(String)
     Fecha_actualizacion = Column(DateTime)
-    
+
+class Cine_data(db_connection.Base):
+    __tablename__ = 'cine_data'
+    id = Column(Integer, primary_key=True)
+    Provincia = Column(String)
+    Pantallas = Column(String)
+    Butacas = Column(String)
+    Espacio_INCAA= Column(String)
+    Fecha_actualizacion= Column(DateTime)
+
+class Registros_x_categoria(db_connection.Base):
+    __tablename__ = 'registros_x_categoria'
+    id = Column(Integer, primary_key=True)
+    Categorias= Column(String)
+    Cant_x_cat = Column(String)
+    Fuente = Column(String)
+    Cant_x_fuente = Column(String)
+    Provincia = Column(String)
+    Categoria = Column(String)
+    Cant_x_prov_cate = Column(String)
+    Fecha_actualizacion = Column(DateTime)
+
+
+
 '''
     def __init__(self,id, Cod_Loc, IdProvincia,IdDepartamento,Categoria,Subcategoria,Provincia,Localidad,
     Nombre,Domicilio,Piso,CP,Cod_area,Telefono,Mail,Web,Pantallas,Butacas,espacio_INCAA,Fuente,Fecha_actualizacion):

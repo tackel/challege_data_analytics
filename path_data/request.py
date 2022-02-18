@@ -42,7 +42,10 @@ class Archivos_request:
                 open(f'{self.ruta}/{categoria}-{self.day}-{self.month}-{self.year}.csv','wb').write(req.content)
                 logging.info(f'Arvhico csv, {categoria} actualizado.')
                 print(f'Arvhico csv, {categoria} actualizado. P')
+            if not req:
+                logging.exception(f'No se pudo establecer una coneccion con el link de {categoria} ')
+                print(f'No se puso establecer una coneccion con el link de {categoria} ')
 
         except:
-            logging.exception('No se pudo obtener el archivo csv del linck de descarga')
-            print('No se pudo obtener el archivo csv del linck de descarga')
+            logging.error(f'No se pudo actualizar el archivo csv del link de descarga {categoria} ')
+            print(f'No se pudo actualizar el archivo csv del link de descarga {categoria} ')
