@@ -6,14 +6,17 @@ import os
 import glob
 import logging
 
+
 class Archivos_request:
     def __init__(self):
-        self.months = ("enero", "febrero", "marzo", "abri", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
+        self.months = ("enero", "febrero", "marzo", "abri", "mayo", "junio",
+                       "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre")
         self.today = date.today()
         self.day = self.today.day
         self.month = self.today.month
-        self.mes = self.months[self.today.month -1]
+        self.mes = self.months[self.today.month - 1]
         self.year = self.today.year
+
     def request(self, categoria):
         try:
             if categoria == 'museos':
@@ -25,27 +28,31 @@ class Archivos_request:
             elif categoria == 'bibliotecas':
                 url_bibliotecas = 'https://datos.cultura.gob.ar/dataset/37305de4-3cce-4d4b-9d9a-fec3ca61d09f/resource/01c6c048-dbeb-44e0-8efa-6944f73715d7/download/biblioteca_popular.csv'
                 req = requests.get(url_bibliotecas)
-        
 
-            if req: # elimina los achivos csv si es que hay un req para actualizarlos
-                self.ruta = Path('path_data',f'{categoria}',f'{self.year}-{self.mes}')
+            if req:  # elimina los achivos csv si es que hay un req para actualizarlos
+                self.ruta = Path(
+                    'path_data', f'{categoria}', f'{self.year}-{self.mes}')
 
-                for folder, subfolders, files in os.walk(f'path_data/{categoria}'):  
-                    for file in files:  
-                        if file.endswith('.csv'):  
-                            path = os.path.join(folder, file)   
+                for folder, subfolders, files in os.walk(f'path_data/{categoria}'):
+                    for file in files:
+                        if file.endswith('.csv'):
+                            path = os.path.join(folder, file)
                             os.remove(path)
 
                 # creo la ruta
-                self.ruta.mkdir(parents=True,exist_ok=True)
+                self.ruta.mkdir(parents=True, exist_ok=True)
                 # guardo el archivo en la ruta
-                open(f'{self.ruta}/{categoria}-{self.day}-{self.month}-{self.year}.csv','wb').write(req.content)
-                logging.info(f'Arvhico csv, {categoria} actualizado.')
-                print(f'Arvhico csv, {categoria} actualizado. P')
+                open(f'{self.ruta}/{categoria}-{self.day}-{self.month}-{self.year}.csv',
+                     'wb').write(req.content)
+                logging.info(f'File csv, {categoria} updated.')
+                print(f'File csv, {categoria} updated.')
             if not req:
-                logging.exception(f'No se pudo establecer una coneccion con el link de {categoria} ')
-                print(f'No se puso establecer una coneccion con el link de {categoria} ')
+                logging.exception(
+                    f'Could not establish a connection to the link {categoria} ')
+                print(
+                    f'Could not establish a connection to the link {categoria} ')
 
         except:
-            logging.error(f'No se pudo actualizar el archivo csv del link de descarga {categoria} ')
-            print(f'No se pudo actualizar el archivo csv del link de descarga {categoria} ')
+            logging.error(
+                f'Could not update the csv file from the link {categoria} ')
+            print(f'Could not update the csv file from the link {categoria} ')
